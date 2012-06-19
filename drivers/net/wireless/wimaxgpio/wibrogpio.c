@@ -495,7 +495,7 @@ static struct file_operations swmx_fops = {
 	owner:		THIS_MODULE,
 	open:		swmxdev_open,
 	release:	swmxdev_release,
-	ioctl:		swmxdev_ioctl,
+	unlocked_ioctl:		swmxdev_ioctl,
 	read:		swmxdev_read,
 	write:		swmxdev_write,
 };
