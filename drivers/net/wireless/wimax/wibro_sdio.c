@@ -708,7 +708,7 @@ uwbrdev_release (struct inode * inode, struct file * file)
 }
 
 static int
-uwbrdev_ioctl (struct inode * inode, struct file * file, u_int cmd, u_long arg)
+uwbrdev_ioctl (struct file * file, u32 cmd, unsigned long arg)
 {
 	int ret = 0;
 	MINIPORT_ADAPTER *Adapter;
