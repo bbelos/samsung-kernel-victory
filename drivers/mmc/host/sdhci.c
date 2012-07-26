@@ -2340,6 +2340,20 @@ int sdhci_suspend_host(struct sdhci_host *host, pm_message_t state)
 	int ret = 0;
 
 	sdhci_disable_card_detection(host);
+#ifdef CONFIG_MACH_VICTORY
+	if (host->mmc->index == 0)              //  WiMAX: mmc0
+        {
+                if (wimax_suspend)
+                {
+                        host->mmc->skip_pwrmgt = 1;
+                        wimax_suspend();
+                }
+                else
+                {
+                        host->mmc->skip_pwrmgt = 0;
+                }
+        }
+#endif
 
 	/* Disable tuning since we are suspending */
 	if (host->version >= SDHCI_SPEC_300 && host->tuning_count &&
@@ -2363,7 +2377,13 @@ int sdhci_suspend_host(struct sdhci_host *host, pm_message_t state)
 
 	if (host->vmmc)
 		ret = regulator_disable(host->vmmc);
+#ifdef CONFIG_MACH_VICTORY
+        if (wimax_suspend && host->mmc->index == 0)             //  WiMAX: mmc0
+        {
 
+                max8893_ldo_disable_direct(4);
+        }
+#endif
 	return ret;
 }
 
@@ -2388,12 +2408,25 @@ int sdhci_resume_host(struct sdhci_host *host)
 	if (host->irq)
 		enable_irq(host->irq);
 
+ #ifdef CONFIG_MACH_VICTORY
+        if (wimax_suspend && host->mmc->index == 0)             //  WiMAX: mmc0
+        {
+                max8893_ldo_enable_direct(4);
+        }
+#endif
 	sdhci_init(host, (host->mmc->pm_flags & MMC_PM_KEEP_POWER));
 	mmiowb();
 
 	ret = mmc_resume_host(host->mmc);
 
 	sdhci_enable_card_detection(host);
+#ifdef CONFIG_MACH_VICTORY
+	if (wimax_resume && host->mmc->index == 0)      //  WiMAX: mmc0
+        {
+                sdhci_enable_sdio_irq(host->mmc, 1);
+                wimax_resume();
+        }
+#endif
 
 	/* Set the re-tuning expiration flag */
 	if ((host->version >= SDHCI_SPEC_300) && host->tuning_count &&
