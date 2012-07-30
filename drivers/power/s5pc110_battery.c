@@ -624,6 +624,14 @@ static void s3c_battery_alarm(struct alarm *alarm)
 	queue_work(chg->monitor_wqueue, &chg->bat_work);
 }
 
+static void s3c_bat_use_timer_func(unsigned long param)
+{
+	struct chg_data *chg = (struct chg_data *)param;
+
+	chg->batt_use &= (~chg->batt_use_wait);
+	pr_info("/BATT_USE/ timer expired (0x%x)\n", chg->batt_use);
+}
+
 static void s3c_bat_use_module(struct chg_data *chg, int module, int enable)
 {
 	del_timer_sync(&chg->bat_use_timer);
@@ -787,6 +795,7 @@ static __devinit int max8998_charger_probe(struct platform_device *pdev)
 		"max8998-charger");
 
 	INIT_WORK(&chg->bat_work, s3c_bat_work);
+	setup_timer(&chg->bat_use_timer, s3c_bat_use_timer_func, (unsigned long)chg);
 
 	chg->monitor_wqueue =
 		create_freezable_workqueue(dev_name(&pdev->dev));
