@@ -119,7 +119,7 @@ int max8893_ldo_enable_direct(int ldo)
 	struct max8893 *max8893 = client_8893data_p;
 	int value, shift;
 
-	if((ldo < MAX8893_LDO1) || (ldo > MAX8893_BUCK))
+	if((ldo < MAX8893_BUCK) || (ldo > MAX8893_END))
 	{
 		printk("ERROR: Invalid argument passed\n");
 		return -EINVAL;
@@ -151,7 +151,7 @@ int max8893_ldo_disable_direct(int ldo)
 	struct max8893 *max8893 = client_8893data_p;
 	int value, shift;
 
-	if((ldo < MAX8893_LDO1) || (ldo > MAX8893_BUCK))
+	if((ldo < MAX8893_BUCK) || (ldo > MAX8893_END))
 	{
 		printk("ERROR: Invalid argument passed\n");
 		return -EINVAL;
