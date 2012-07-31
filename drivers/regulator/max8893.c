@@ -29,6 +29,15 @@
 
 /* Registers */
 #define MAX8893_REG_ONOFF 0x00
+#define MAX8893_REG_DISCHARGE  0x01
+#define MAX8893_REG_LSTIME     0x02
+#define MAX8893_REG_DVSRAMP    0x03
+#define MAX8893_REG_BUCK       0x04
+#define MAX8893_REG_LDO1       0x05
+#define MAX8893_REG_LDO2       0x06
+#define MAX8893_REG_LDO3       0x07
+#define MAX8893_REG_LDO4       0x08
+#define MAX8893_REG_LDO5       0x09
 
 #define MAX8893_STEP		(100000)
 
@@ -68,6 +77,27 @@ static int max8893_i2c_cache_read(struct i2c_client *client, u8 reg, u8 *dest)
 	DBG("func =%s : reg = %d, value = %x\n",__func__,reg, max8893_cache_regs[reg]);
 
 	return 0;
+}
+
+static int max8893_i2c_read(struct i2c_client *client, u8 reg, u8 *dest)
+{
+       int ret;
+
+       DBG("func =%s :: Start!!!\n",__func__);
+
+       ret = i2c_smbus_read_byte_data(client, reg);
+
+       DBG("func =%s : i2c_smbus_read_byte_data -> return data = %d\n",__func__, ret);
+
+       if (ret < 0)
+               return -EIO;
+
+       max8893_cache_regs[reg] = ret;
+
+       DBG("func =%s : reg = %d, value = %x\n",__func__,reg, ret);
+
+       *dest = ret & 0xff;
+       return 0;
 }
 
 static int max8893_i2c_write(struct i2c_client *client, u8 reg, u8 value)
@@ -424,7 +454,19 @@ static int __devinit max8893_probe(struct i2c_client *client,
 		}
 	}
 
+	max8893_i2c_read(client, MAX8893_REG_ONOFF, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_DISCHARGE, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_LSTIME, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_DVSRAMP, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_BUCK, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_LDO1, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_LDO2, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_LDO3, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_LDO4, (u8 *) &ret);
+	max8893_i2c_read(client, MAX8893_REG_LDO5, (u8 *) &ret);
+
 	i2c_set_clientdata(client, max8893);
+	client_8893data_p = max8893; // store 8893 client data to be used later
 	dev_info(&client->dev, "Maxim 8893 regulator driver loaded\n");
 	return 0;
 
