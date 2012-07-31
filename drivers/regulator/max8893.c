@@ -165,7 +165,7 @@ int max8893_ldo_enable_direct(int ldo)
     }
     else
     {
-      shift = 6 - ldo;
+      shift = 7 - ldo;
     }
 
 	value = max8893_read_reg(max8893, MAX8893_REG_ONOFF);
@@ -198,7 +198,7 @@ int max8893_ldo_disable_direct(int ldo)
     }
     else
     {
-      shift = 6 - ldo;
+      shift = 7 - ldo;
     }
 
 	value = max8893_read_reg(max8893, MAX8893_REG_ONOFF);
