@@ -685,7 +685,7 @@ static int __devinit fsa9480_probe(struct i2c_client *client,
         indicator_dev.name = DRIVER_NAME;
 #if 1
         indicator_dev.print_name = print_switch_name;
-        indicator_dev.print_state = print_switch_state;
+        //indicator_dev.print_state = print_switch_state;
 #endif
         switch_dev_register(&indicator_dev);
 
