@@ -53,7 +53,7 @@ enum adc_channel_type{
 #endif
 
 enum {
-	BATT_VOL = 0,
+	/* BATT_VOL = 0,
 	BATT_VOL_ADC,
 	BATT_VOL_ADC_CAL,
 	BATT_TEMP,
@@ -72,7 +72,8 @@ enum {
 	BATT_COMPENSATION,
 	BATT_BOOTING,
 	BATT_FG_SOC,
-	BATT_RESET_SOC,
+	BATT_RESET_SOC, */
+	CHARGING_MODE_BOOTING = 0,
 };
 
 #define TOTAL_CHARGING_TIME	(6*60*60)	/* 6 hours */
